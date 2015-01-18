@@ -14,3 +14,10 @@ As simple as that:
 ```bash
 go run main.go
 ```
+
+## Running the tests
+You need to have gingko installed.
+
+```bash
+ginkgo -r
+```
