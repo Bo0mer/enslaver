@@ -20,6 +20,15 @@ type FakeEnslaver struct {
 	slavesReturns struct {
 		result1 []Slave
 	}
+	ExecuteStub        func(JobRequest) (Job, error)
+	executeMutex       sync.RWMutex
+	executeArgsForCall []struct {
+		arg1 JobRequest
+	}
+	executeReturns struct {
+		result1 Job
+		result2 error
+	}
 }
 
 func (fake *FakeEnslaver) Register(arg1 Slave) {
@@ -67,6 +76,39 @@ func (fake *FakeEnslaver) SlavesReturns(result1 []Slave) {
 	fake.slavesReturns = struct {
 		result1 []Slave
 	}{result1}
+}
+
+func (fake *FakeEnslaver) Execute(arg1 JobRequest) (Job, error) {
+	fake.executeMutex.Lock()
+	fake.executeArgsForCall = append(fake.executeArgsForCall, struct {
+		arg1 JobRequest
+	}{arg1})
+	fake.executeMutex.Unlock()
+	if fake.ExecuteStub != nil {
+		return fake.ExecuteStub(arg1)
+	} else {
+		return fake.executeReturns.result1, fake.executeReturns.result2
+	}
+}
+
+func (fake *FakeEnslaver) ExecuteCallCount() int {
+	fake.executeMutex.RLock()
+	defer fake.executeMutex.RUnlock()
+	return len(fake.executeArgsForCall)
+}
+
+func (fake *FakeEnslaver) ExecuteArgsForCall(i int) JobRequest {
+	fake.executeMutex.RLock()
+	defer fake.executeMutex.RUnlock()
+	return fake.executeArgsForCall[i].arg1
+}
+
+func (fake *FakeEnslaver) ExecuteReturns(result1 Job, result2 error) {
+	fake.ExecuteStub = nil
+	fake.executeReturns = struct {
+		result1 Job
+		result2 error
+	}{result1, result2}
 }
 
 var _ enslaver.Enslaver = new(FakeEnslaver)
