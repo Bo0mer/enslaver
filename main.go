@@ -9,6 +9,7 @@ import (
 	conf "github.com/Bo0mer/enslaver/config"
 	"github.com/Bo0mer/enslaver/enslaver"
 	"github.com/Bo0mer/enslaver/facade"
+	"github.com/Bo0mer/enslaver/slaveclient"
 
 	"github.com/Bo0mer/os-agent/server"
 
@@ -18,13 +19,16 @@ import (
 func main() {
 	config := loadConfig()
 
-	enslaver := enslaver.NewEnslaver()
+	slaveClient := slaveclient.NewSlaveClient()
+	enslaver := enslaver.NewEnslaver(slaveClient)
 	enslaverFacade := facade.NewEnslaverFacade(enslaver)
 
 	registerSlaveHandler := server.NewHandler("POST", "/register", enslaverFacade.RegisterSlave)
+	executeHandler := server.NewHandler("POST", "/jobs", enslaverFacade.CreateJob)
 
 	s := server.NewServer(config.Server.Host, config.Server.Port)
 	s.Register(registerSlaveHandler)
+	s.Register(executeHandler)
 
 	l4g.Info("Starting HTTP server on %s:%d", config.Server.Host, config.Server.Port)
 	err := s.Start()

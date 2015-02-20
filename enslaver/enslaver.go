@@ -64,6 +64,8 @@ func (e *enslaver) Execute(jobRequest JobRequest) (Job, error) {
 	}
 
 	for i, slave := range jobRequest.Slaves {
+		// get the host and the port
+		slave = e.slaves[slave.Id]
 		slaveJobId, _ := e.slaveClient.Execute(jobRequest.Command, slave)
 		slaveJob, _ := e.slaveClient.Job(slaveJobId, slave)
 
