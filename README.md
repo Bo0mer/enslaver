@@ -21,3 +21,100 @@ You need to have gingko installed.
 ```bash
 ginkgo -r
 ```
+
+## API
+
+Following is the API that is provided by the OS-Agent for executing commands.
+
+The response codes that are returned by the OS-Agent are splitted into the following groups:
+
+| Group | Description |
+| ---- | ----------- |
+| 2XX | The requested operation completed successfully. |
+| 4XX | There was a problem with the request payload. |
+| 5XX | Execution of the operation failed due to some unexpected reason. |
+
+**Payload**
+
+The API is based on JSON request and responses. If not stated otherwise, default content-type should be `application/json`.
+
+### Create Job
+
+`POST /jobs`
+
+**Request**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| slaves | array | Slaves which should execute the command. **Only id is required.** |
+| async | boolean | This field is discarded for now. |
+| command | struct | Properties of the command to run. |
+
+Example Request:
+
+```
+{
+    "slaves": [
+        {
+            "id": "alice"
+        },
+        {
+            "id": "bob"
+        }
+    ],
+    "aysnc": true,
+    "command": {
+        "name": "cat",
+        "args": [
+            "arg1",
+            "arg2"
+        ],
+        "env": {
+            "variable_name1": "value1",
+            "variable_name2": "value2"
+        },
+        "use_isolated_env": false,
+        "working_dir": "/home/agent/whoa",
+        "input": "This is the input to the cat command."
+    }
+}
+```
+
+**Response**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| id | string | The id of the (created) job. |
+| status | string | The status of the job. Either `COMPLETED` or `IN_PROCESS`. |
+| results | array | Contains an entry for each enslaver in the request. The entry specifies which is the slave, what is the status of it's execution, and the result of it. (see the example) |
+
+**Note**
+The job will be in status `COMPLETED` **iff** all the slaves have executed the command. 
+
+Example Response:
+
+```
+{
+    "id": "job-id",
+    "status": "COMPLETED",
+    "results": [
+        {
+            "slave": {
+                "id": "id-1",
+                "tags": {
+                    "tagKey": "tagValue",
+                    "tagKey2": "tagValue2"
+                }
+            },
+            "status": "COMPLETED",
+            "result": {
+                "stdout": "blabla",
+                "stderr": "",
+                "exit_code": 0,
+                "error": ""
+            }
+        }
+    ]
+}
+```
+
