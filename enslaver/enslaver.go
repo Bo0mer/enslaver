@@ -40,6 +40,8 @@ func (e *enslaver) Slaves() []Slave {
 	slavesSlice := make([]Slave, 0, len(e.slaves))
 
 	for _, slave := range e.slaves {
+		slave.Host = ""
+		slave.Port = 0
 		slavesSlice = append(slavesSlice, slave)
 	}
 

@@ -60,7 +60,7 @@ func (f *enslaverFacade) CreateJob(req server.Request, resp server.Response) {
 func (f *enslaverFacade) Slaves(req server.Request, resp server.Response) {
 	slaves := f.enslaver.Slaves()
 	slavesJSON, _ := json.Marshal(slaves)
-	println(slaves)
+
 	resp.SetBody(slavesJSON)
 	resp.SetStatusCode(http.StatusOK)
 }

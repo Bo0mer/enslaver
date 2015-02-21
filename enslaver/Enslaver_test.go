@@ -33,7 +33,10 @@ var _ = Describe("Enslaver", func() {
 		It("should be able to get registered slaves", func() {
 			slaves := enslaver.Slaves()
 			Expect(slaves).To(HaveLen(1))
-			Expect(slaves[0]).To(Equal(slave))
+			Expect(slaves[0].Id).To(Equal(slave.Id))
+			Expect(slaves[0].Tags).To(Equal(slave.Tags))
+			Expect(slaves[0].Host).To(BeEmpty())
+			Expect(slaves[0].Port).To(Equal(0))
 		})
 
 	})
