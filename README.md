@@ -38,6 +38,37 @@ The response codes that are returned by the OS-Agent are splitted into the follo
 
 The API is based on JSON request and responses. If not stated otherwise, default content-type should be `application/json`.
 
+### Get Slaves
+
+`GET /slave`
+
+**Request**
+Request should not contain any data. If it contains, it is discarded.
+
+**Response**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| slaves | array | All registered slaves. |
+
+Example Response:
+
+```JSON
+[
+    {
+        "id": "alice",
+        "tags": {
+            "tagKey1": "tagValue1",
+            "tagKey2": "tagValue2"
+        }
+    },
+    {
+        "id": "bob",
+        "tags": {}
+    }
+]
+```
+
 ### Create Job
 
 `POST /jobs`
@@ -52,7 +83,7 @@ The API is based on JSON request and responses. If not stated otherwise, default
 
 Example Request:
 
-```
+```JSON
 {
     "slaves": [
         {
@@ -93,7 +124,7 @@ The job will be in status `COMPLETED` **iff** all the slaves have executed the c
 
 Example Response:
 
-```
+```JSON
 {
     "id": "job-id",
     "status": "COMPLETED",
