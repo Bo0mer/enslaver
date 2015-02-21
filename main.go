@@ -24,11 +24,13 @@ func main() {
 	enslaverFacade := facade.NewEnslaverFacade(enslaver)
 
 	registerSlaveHandler := server.NewHandler("POST", "/register", enslaverFacade.RegisterSlave)
+	listSlavesHandler := server.NewHandler("GET", "/slave", enslaverFacade.Slaves)
 	executeHandler := server.NewHandler("POST", "/jobs", enslaverFacade.CreateJob)
 
 	s := server.NewServer(config.Server.Host, config.Server.Port)
 	s.Register(registerSlaveHandler)
 	s.Register(executeHandler)
+	s.Register(listSlavesHandler)
 
 	l4g.Info("Starting HTTP server on %s:%d", config.Server.Host, config.Server.Port)
 	err := s.Start()

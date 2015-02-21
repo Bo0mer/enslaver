@@ -156,4 +156,41 @@ var _ = Describe("EnslaverFacade", func() {
 
 	})
 
+	Describe("Slaves", func() {
+
+		Context("when everything is ok", func() {
+			var slaves []model.Slave
+
+			BeforeEach(func() {
+				slaves = []model.Slave{
+					model.Slave{
+						Id: "slave-one",
+					},
+					model.Slave{
+						Id: "slave-two",
+					},
+				}
+
+				fakeEnslaver.SlavesReturns(slaves)
+
+				facade.Slaves(req, resp)
+			})
+
+			It("should have called the enslaver", func() {
+				Expect(fakeEnslaver.SlavesCallCount()).To(Equal(1))
+			})
+
+			It("should have returned the slaves", func() {
+				slavesJSON, _ := json.Marshal(slaves)
+				Expect(resp.SetBodyArgsForCall(0)).To(Equal(slavesJSON))
+			})
+
+			It("should return status code 200 OK", func() {
+				Expect(resp.SetStatusCodeArgsForCall(0)).To(Equal(http.StatusOK))
+			})
+
+		})
+
+	})
+
 })

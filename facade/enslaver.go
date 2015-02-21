@@ -13,6 +13,7 @@ import (
 type EnslaverFacade interface {
 	RegisterSlave(server.Request, server.Response)
 	CreateJob(server.Request, server.Response)
+	Slaves(server.Request, server.Response)
 }
 
 type enslaverFacade struct {
@@ -53,5 +54,13 @@ func (f *enslaverFacade) CreateJob(req server.Request, resp server.Response) {
 
 	responseBody, _ := json.Marshal(job)
 	resp.SetBody(responseBody)
+	resp.SetStatusCode(http.StatusOK)
+}
+
+func (f *enslaverFacade) Slaves(req server.Request, resp server.Response) {
+	slaves := f.enslaver.Slaves()
+	slavesJSON, _ := json.Marshal(slaves)
+	println(slaves)
+	resp.SetBody(slavesJSON)
 	resp.SetStatusCode(http.StatusOK)
 }
